@@ -1,6 +1,6 @@
 import { Repository } from 'typeorm';
 import { User } from '../entity/User';
-import { addUser, getUser, getUsers } from './userService';
+import { addUser, getUser, getUsers, updateUser } from './userService';
 
 const mockUsers = [
   {
@@ -21,8 +21,9 @@ const mockUsers = [
 
 const usersRepo = {
   find: jest.fn(),
-  findOneBy: jest.fn(), //(id) => mockUsers.find((u) => u.id === id)
+  findOneBy: jest.fn(),
   save: jest.fn(),
+  update: jest.fn()
 } as unknown as Repository<User>;
 
 afterEach(jest.resetAllMocks);
@@ -66,7 +67,7 @@ describe('users service: getUser', () => {
 });
 
 describe('users service: addUser', () => {
-  it('should envoke repo.save', async () => {
+  it('should invoke repo.save', async () => {
     (usersRepo.save as jest.Mock).mockResolvedValueOnce({});
     const addResult = await addUser(usersRepo, mockUsers[1]);
     expect(addResult.isOk()).toBe(true);
@@ -74,12 +75,30 @@ describe('users service: addUser', () => {
     expect(usersRepo.save).toHaveBeenCalledWith(mockUsers[1]);
   });
 
-  it('should envoke repo.save, return an error result', async () => {
+  it('should invoke repo.save, return an error result', async () => {
     const testErr = new Error('badness');
     (usersRepo.save as jest.Mock).mockRejectedValueOnce(testErr);
     const addResult = await addUser(usersRepo, mockUsers[1]);
     expect(addResult.isOk()).toBe(false);
     addResult.mapErr((err) => expect(err).toEqual(testErr));
     expect(usersRepo.save).toHaveBeenCalledWith(mockUsers[1]);
+  });
+});
+
+describe('users service: updateUser', () => {
+  it('should invoke repo.upate', async () => {
+    (usersRepo.update as jest.Mock).mockResolvedValueOnce({});
+    const updateResult = await updateUser(usersRepo, 1, {first_name: 'jim'});
+    expect(updateResult.isOk()).toBe(true);
+    updateResult.map((value) => expect(value).toEqual({}));
+    expect(usersRepo.update).toHaveBeenCalledWith(1, {first_name: 'jim'});
+  });
+
+  it('should invoke repo.update', async () => {
+    const testErr = new Error('badness');
+    (usersRepo.update as jest.Mock).mockRejectedValueOnce(testErr);
+    const updateResult = await updateUser(usersRepo, 1, {first_name: 'jim'});
+    expect(updateResult.isOk()).toBe(false);
+    updateResult.mapErr((err) => expect(err).toEqual(testErr));
   });
 });

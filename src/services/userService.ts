@@ -28,3 +28,12 @@ export async function addUser(usersRepo: Repository<User>, user: User) {
     return err(e);
   }
 }
+
+export async function updateUser(usersRepo: Repository<User>, id: number, user: Partial<User>) {
+  try {
+    const response = await usersRepo.update(id, user);
+    return ok(response);
+  } catch (e) {
+    return err(e);
+  }
+}

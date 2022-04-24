@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { addUser, getUser, getUsers } from '../../services/userService';
+import { addUser, getUser, getUsers, updateUser } from '../../services/userService';
 import { Repositories } from '../../constants/Repositories';
 import { appDataSource } from '../../entity/appDataSource';
 import { User } from '../../entity/User';
@@ -89,5 +89,24 @@ export async function postUserRoute(req: Request, res: Response) {
   );
   result
     .map((value) => okResponse(value, res, 201))
+    .mapErr((err) => errorResponse(err as Error, res, 500));
+}
+
+export function validateUpdateUser(req: Request, res: Response, next: NextFunction) {
+  const { body, params } = req;
+  if (!params.id || isNaN(+params.id) || (!body.first_name && !body.last_name && !body.email)) {
+    return errorResponse(new Error('bad request'), res, 400);
+  }
+  next();
+}
+export async function updateUserRoute(req: Request, res: Response) {
+  const { body, params } = req;
+  const result = await updateUser(
+    appDataSource.getRepository(Repositories.User), 
+    +params.id,
+    body
+  );
+  result
+    .map((value) => okResponse(value, res, 202))
     .mapErr((err) => errorResponse(err as Error, res, 500));
 }
