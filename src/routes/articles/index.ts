@@ -1,15 +1,15 @@
-import { Application, Router } from 'express';
+import { Router } from 'express';
 import { DependencyContainer } from 'tsyringe';
 import { Routes } from '../../constants/Routes';
 import { ArticleController } from './ArticleController';
 
 export default function initializeArticleRoutes(
   container: DependencyContainer,
-  app: Application
+  router: Router
 ) {
-  const articlesRouter = Router();
+  const articlesRouter = Router({ mergeParams: true });
+  router.use(`/:id${Routes.articles}`, articlesRouter);
   const controller = container.resolve(ArticleController);
-  articlesRouter.get(Routes.articles, controller.getArticlesRoute);
-  articlesRouter.post(Routes.articles, controller.addArticle);
-  app.use(articlesRouter);
+  articlesRouter.get(Routes.root, controller.getArticlesRoute);
+  articlesRouter.post(Routes.root, controller.addArticle);
 }

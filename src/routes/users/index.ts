@@ -6,7 +6,7 @@ import {
   postUserRoute,
   validateGetUser,
   validateUpdateUser,
-  updateUserRoute
+  updateUserRoute,
 } from './userController';
 
 const usersRouter = Router();
