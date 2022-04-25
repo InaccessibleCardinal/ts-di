@@ -2,7 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import { initializeAppDataSource } from './entity/appDataSource';
 import container from './bootstrap';
-import initializeClassControllers from './routes/initializeClassControllers'
+import initializeClassControllers from './routes/initializeClassControllers';
 import initialzeAppMiddleware from './middleware';
 import initializeRoutes from './routes';
 

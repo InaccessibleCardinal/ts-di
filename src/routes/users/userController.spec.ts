@@ -1,6 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
 import { err, ok } from 'neverthrow';
-import { addUser, getUsers, getUser, updateUser } from '../../services/userService';
+import {
+  addUser,
+  getUsers,
+  getUser,
+  updateUser,
+} from '../../services/userService';
 import { appDataSource } from '../../entity/appDataSource';
 import { errorResponse, okResponse } from '../../util/apiResponses';
 import {
@@ -10,7 +15,7 @@ import {
   postUserRoute,
   validateGetUser,
   validateUpdateUser,
-  updateUserRoute
+  updateUserRoute,
 } from './userController';
 import { Repository } from 'typeorm';
 import { User } from '../../entity/User';
@@ -195,7 +200,10 @@ describe('userController: postUserRoute', () => {
 
 describe('userController: validateUpdateUser', () => {
   it('should invoke next', async () => {
-    const mockReq = { params: {id: 1}, body: {first_name: 'ken'}} as unknown as Request;
+    const mockReq = {
+      params: { id: 1 },
+      body: { first_name: 'ken' },
+    } as unknown as Request;
     const mockRes = {} as Response;
     const mockNext = jest.fn();
     await validateUpdateUser(mockReq, mockRes, mockNext);
@@ -203,7 +211,10 @@ describe('userController: validateUpdateUser', () => {
   });
 
   it('should invoke errorResponse, bad id path param', async () => {
-    const mockReq = { params: {id: 'x'}, body: {first_name: 'ken'}} as unknown as Request;
+    const mockReq = {
+      params: { id: 'x' },
+      body: { first_name: 'ken' },
+    } as unknown as Request;
     const mockRes = {} as Response;
     const mockNext = jest.fn();
     await validateUpdateUser(mockReq, mockRes, mockNext);
@@ -212,7 +223,10 @@ describe('userController: validateUpdateUser', () => {
   });
 
   it('should invoke errorResponse, no id path param', async () => {
-    const mockReq = { params: {}, body: {first_name: 'ken'}} as unknown as Request;
+    const mockReq = {
+      params: {},
+      body: { first_name: 'ken' },
+    } as unknown as Request;
     const mockRes = {} as Response;
     const mockNext = jest.fn();
     await validateUpdateUser(mockReq, mockRes, mockNext);
@@ -221,7 +235,10 @@ describe('userController: validateUpdateUser', () => {
   });
 
   it('should invoke next', async () => {
-    const mockReq = { params: {id: 1}, body: {irrelevant: 'ken'}} as unknown as Request;
+    const mockReq = {
+      params: { id: 1 },
+      body: { irrelevant: 'ken' },
+    } as unknown as Request;
     const mockRes = {} as Response;
     const mockNext = jest.fn();
     await validateUpdateUser(mockReq, mockRes, mockNext);
@@ -233,18 +250,24 @@ describe('userController: validateUpdateUser', () => {
 describe('userController: updateUserRoute', () => {
   it('should invoke updateUser, handle success result', async () => {
     (updateUser as jest.Mock).mockResolvedValueOnce(ok({}));
-    const mockReq = { params: {id: '1'}, body: {first_name: 'ken'}} as unknown as Request;
+    const mockReq = {
+      params: { id: '1' },
+      body: { first_name: 'ken' },
+    } as unknown as Request;
     const mockRes = {} as Response;
     await updateUserRoute(mockReq, mockRes);
     expect(okResponse).toHaveBeenCalled();
     expect(errorResponse).not.toHaveBeenCalled();
-    expect(updateUser).toHaveBeenCalledWith(mockRepo, 1, {first_name: 'ken'});
+    expect(updateUser).toHaveBeenCalledWith(mockRepo, 1, { first_name: 'ken' });
   });
 
   it('should invoke updateUser, handle error result', async () => {
     const testErr = new Error('all bad');
     (updateUser as jest.Mock).mockResolvedValueOnce(err(testErr));
-    const mockReq = { params: {id: '1'}, body: {first_name: 'ken'}} as unknown as Request;
+    const mockReq = {
+      params: { id: '1' },
+      body: { first_name: 'ken' },
+    } as unknown as Request;
     const mockRes = {} as Response;
     await updateUserRoute(mockReq, mockRes);
     expect(okResponse).not.toHaveBeenCalled();
